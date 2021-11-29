@@ -107,6 +107,17 @@ node {
                 echo 'Skipping deploy, because build not successful or not on main branch'
             }
         }
+
+        stage('Integration') {
+            def config = [
+                serverUrl: 'localhost:9092',
+                serverCredentialsId: '',
+                image: 'argoproj/argocd:v2.1.7',
+                registryCredentialsId: '',
+                application: 'petclinic-plain-staging'
+            ]
+            syncAndWait(config)
+        }
     }
 
     // Archive Unit and integration test results, if any
@@ -148,6 +159,42 @@ String createImageTag() {
     }
 
     return "${new Date().format('yyyyMMddHHmm')}-${git.commitHashShort}${branchSuffix}"
+}
+
+void syncAndWait(def config) {
+    String argocdConfigPath = '/tmp/.argocd/config'
+    withDockerImage(config) {
+        sh "argocd login ${config.server} --username admin --password admin --insecure --config ${argocdConfigPath}"
+        sh "argocd app sync ${config.application} --prune --async --config ${argocdConfigPath}"
+        sh "argocd app wait ${config.application} --config ${argocdConfigPath}"
+    }
+}
+
+void withDockerImage(def config, Closure body) {
+    if(config.containsKey('credentialsId') && config.credentialsId) {
+        def registryUrl = getRegistryUrlFromImage(config.image)
+        docker.withRegistry("https://${registryUrl}", config.credentialsId) {
+            runDockerImage(config.image, body)
+        }
+    } else {
+        runDockerImage(config.image, body)
+    }
+}
+
+String getRegistryUrlFromImage(String image) {
+    int i = image.lastIndexOf('/')
+    return  image.substring(0, i)
+}
+
+void runDockerImage(String image, Closure body) {
+    docker.image(image).inside(
+        // Allow accessing WORKSPACE even when we are in a child dir (using "dir() {}")
+        "${pwd().equals(env.WORKSPACE) ? '' : "-v ${env.WORKSPACE}:${env.WORKSPACE} "}" +
+            // Avoid: "ERROR: The container started but didn't run the expected command"
+            '--entrypoint="" --network="host"'
+    ) {
+        body()
+    }
 }
 
 def loadLibraries() {
