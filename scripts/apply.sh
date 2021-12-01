@@ -252,7 +252,7 @@ function initJenkins() {
   configureJenkinsCommand=(configureJenkins "${JENKINS_URL}" "${JENKINS_USERNAME}" "${JENKINS_PASSWORD}"
     "${SCMM_URL_FOR_JENKINS}" "${SCMM_PASSWORD}" "${REGISTRY_URL}"
     "${REGISTRY_PATH}" "${REGISTRY_USERNAME}" "${REGISTRY_PASSWORD}"
-    "${INSTALL_ALL_MODULES}" "${INSTALL_FLUXV1}" "${INSTALL_FLUXV2}" "${INSTALL_ARGOCD}")
+    "${INSTALL_ALL_MODULES}" "${INSTALL_FLUXV1}" "${INSTALL_FLUXV2}" "${INSTALL_ARGOCD}" "${SET_PASSWORD}")
 
   evalWithSpinner "Configuring Jenkins..." "${configureJenkinsCommand[@]}"
 }

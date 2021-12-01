@@ -91,6 +91,7 @@ function configureJenkins() {
   INSTALL_FLUXV1="${11}"
   INSTALL_FLUXV2="${12}"
   INSTALL_ARGOCD="${13}"
+  ARGOCD_PASSWORD="${14}"
   
   
   waitForJenkins
@@ -132,6 +133,7 @@ function configureJenkins() {
 
   createCredentials "scmm-user" "gitops" "${SCMM_PASSWORD}" "credentials for accessing scm-manager"
   createCredentials "registry-user" "${REGISTRY_USERNAME}" "${REGISTRY_PASSWORD}" "credentials for accessing the docker-registry"
+  createCredentials "argocd-user" "admin" "${ARGOCD_PASSWORD}" "credentials for accessing argocd-server"
 
 
   if [[ $INSTALL_ALL_MODULES == true || $INSTALL_FLUXV1 == true ]]; then
