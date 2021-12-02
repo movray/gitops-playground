@@ -114,7 +114,7 @@ node {
                 serverCredentialsId: 'argocd-user',
                 image: 'argoproj/argocd:v2.1.7',
                 registryCredentialsId: '',
-                application: 'petclinic-plain-staging' // name of the application from the application.yaml,
+                application: 'petclinic-plain-staging', // name of the application from the application.yaml
                 dockerExtraArgs: '--network="host"' // need this when starting locally
             ]
             syncAndWait(config)
@@ -134,8 +134,7 @@ void addSpecificGitOpsConfig(gitopsConfig) {
         cesBuildLibRepo: cesBuildLibRepo,
         cesBuildLibVersion: cesBuildLibVersion,
         cesBuildLibCredentialsId: scmManagerCredentials,
-        
-        
+
         // The GitOps playground provides parameters for overwriting the build images used by gitops-build-lib, so 
         // it also works in an offline context.
         // Those parameters overwrite the following parameters.
@@ -162,25 +161,25 @@ String createImageTag() {
     return "${new Date().format('yyyyMMddHHmm')}-${git.commitHashShort}${branchSuffix}"
 }
 
-void syncAndWait(def config) {
+void syncAndWait(config) {
     String argocdConfigPath = '/tmp/.argocd/config' // set config path to tmp, because of folder permissions
     withDockerImage(config) {
         withCredentials([usernamePassword(credentialsId: config.serverCredentialsId, passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-            sh "argocd login ${config.server} --username ${USERNAME} --password ${PASSWORD} --insecure --config ${argocdConfigPath}"
+            sh "argocd login ${config.serverUrl} --username ${USERNAME} --password ${PASSWORD} --insecure --config ${argocdConfigPath}"
         }
         sh "argocd app sync ${config.application} --prune --async --config ${argocdConfigPath}"
         sh "argocd app wait ${config.application} --config ${argocdConfigPath}"
     }
 }
 
-void withDockerImage(def config, Closure body) {
+void withDockerImage(config, Closure body) {
     if(config.containsKey('credentialsId') && config.credentialsId) {
         def registryUrl = getRegistryUrlFromImage(config.image)
         docker.withRegistry("https://${registryUrl}", config.credentialsId) {
-            runDockerImage(config.image, body)
+            runDockerImage(config, body)
         }
     } else {
-        runDockerImage(config.image, body)
+        runDockerImage(config, body)
     }
 }
 
@@ -189,8 +188,8 @@ String getRegistryUrlFromImage(String image) {
     return  image.substring(0, i)
 }
 
-void runDockerImage(String image, Closure body) {
-    docker.image(image).inside(
+void runDockerImage(config, Closure body) {
+    docker.image(config.image).inside(
         // Allow accessing WORKSPACE even when we are in a child dir (using "dir() {}")
         "${pwd().equals(env.WORKSPACE) ? '' : "-v ${env.WORKSPACE}:${env.WORKSPACE} "}" +
             // Avoid: "ERROR: The container started but didn't run the expected command"
