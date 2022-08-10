@@ -2,7 +2,7 @@
 server:
   ## Server service configuration
   service:
-    type: LoadBalancer
+    type: NodePort
     # Is ignored when type is LoadBalancer. For local cluster we change the service type to NodePort
     nodePortHttp: 9092
     nodePortHttps: 9093
@@ -31,4 +31,5 @@ repoServer:
       namespace: monitoring
       selector:
         release: kube-prometheus-stack
-  
+notifications:
+  enabled: false
