@@ -5,6 +5,7 @@ The following will deploy a komplete ELK Stack inside gitops-playground.
 
 
 #### Kibana
+
 Kibana is reachable at URL
 ```
 	http://localhost:9100
@@ -12,7 +13,9 @@ Kibana is reachable at URL
 
 
 <br>
+
 #### Elastic
+
 Elastic 
 	with 1 Maser, 1 Client and 1 data insatnce 
 ```
@@ -27,7 +30,9 @@ password: admin
 ```
 
 <br>
+
 #### Logstash
+
 logstash has two configured inputs
 ```
 	beats http://localhost:9144
@@ -37,7 +42,9 @@ logstash has two configured inputs
 
 
 <br>
+
 ### Deploy / Install
+
 First make shure gitops-playground is up and running, then
 ```
 cd gitops-playground/elk-stack
@@ -47,12 +54,12 @@ make deploy
 
 
 <br>
+
 ### Uninstall
+
 ```
 make uninstall  =>   will uninstall, but leaves the namespace, pvc, role, rolebindings and secrets
- 
-```
-```
+
 make clean  => will purge all
 ```
 
