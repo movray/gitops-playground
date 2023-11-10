@@ -25,6 +25,8 @@ spec:
               value: "file:/tmp/messages/messages"
             - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK
               value: INFO
+            - name: STAGE
+              value: "Staging"
           readinessProbe:
             failureThreshold: 3
             httpGet:

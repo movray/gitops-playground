@@ -76,7 +76,7 @@ RUN mv /tmp/kubectl /dist/usr/local/bin/kubectl
 
 # External Repos used in GOP
 WORKDIR /dist/gitops/repos
-RUN git clone --bare https://github.com/cloudogu/spring-petclinic.git 
+RUN git clone --bare https://github.com/cloudogu/spring-petclinic.git #
 RUN git clone --bare https://github.com/cloudogu/spring-boot-helm-chart.git
 RUN git clone --bare https://github.com/cloudogu/gitops-build-lib.git
 RUN git clone --bare https://github.com/cloudogu/ces-build-lib.git
