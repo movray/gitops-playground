@@ -75,7 +75,7 @@ class ApplicationConfigurator {
                     ],
                     springPetclinic: [
                             url: System.getenv('SPRING_PETCLINIC_REPO') ?: 'https://github.com/cloudogu/spring-petclinic.git',
-                            ref: '9673044'
+                            ref: '344ed0c'
                     ],
                     gitopsBuildLib: [
                             url: System.getenv('GITOPS_BUILD_LIB_REPO') ?: 'https://github.com/cloudogu/gitops-build-lib.git',
